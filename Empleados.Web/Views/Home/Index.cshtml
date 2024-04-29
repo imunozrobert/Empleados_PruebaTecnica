@@ -11,6 +11,7 @@
 
 <h3>Empleados</h3>
 <hr />
+
 <div class="d-flex flex-row justify-content-end">
     <button class="btn btn-primary" onclick="openModal(0)">+ Nuevo Empleado</button>
 </div>
@@ -212,13 +213,13 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                alert('Datos guardados');
+                                Swal.fire('¡Éxito!', 'Datos guardados', 'success');
                                 setTimeout(function () {
                                     window.location.href = '@Url.Action("Index", "Home")';
                                 }, 2000);
                             }
                             else {
-                                alert(response.msg);
+                                Swal.fire('¡Error!', response.msg, 'error')
                             }
                         },
                         complete: function () {
@@ -228,7 +229,6 @@
                 },
                 rules: reglasFormulario
             });
-            tableListadoGet();
         });
 
         function openModal(_id) {
@@ -270,10 +270,8 @@
                             mdlForm.show();
                         }
                         else {
-                            alert(response.msg);
+                            Swal.fire('¡Error!', response.msg, 'error')
                         }
-                        //$("#frmDatos").validate({ rules: reglasFormulario });
-                        
                     },
                     complete: function () {
                         
@@ -285,55 +283,78 @@
 
         function saveEmployee() {
             formulario.submit();
-            // var formData = new FormData(formulario[0]);
-
-            // $.ajax({
-            //     url: $("#UrlSaveEmployee").val(),
-            //     type: "POST",
-            //     data: formData,
-            //     dataType: 'json',
-            //     contentType: false,
-            //     processData: false,
-            //     beforeSend: function () {
-            //         //mostrarLoading();
-            //     },
-            //     success: function (response) {
-            //         if (response.success) {
-            //             alert('Datos guardados');
-            //             setTimeout(function () {
-            //                 window.location.href = '@Url.Action("Index", "Home")';
-            //             }, 2000);
-            //         }
-            //         else {
-            //             alert(response.msg);
-            //         }
-            //     },
-            //     complete: function () {
-                    
-            //     },
-            // });
         }
 
         function deleteEmployee(_id) {
-            $.ajax({
-                url: $("#UrlDeleteEmployee").val(),
-                type: "POST",
-                data: {
-                    id: _id
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success ml-2',
+                    cancelButton: 'btn btn-danger'
                 },
-                success: function (response) {
-                    //console.log(response);
-                    if (response.success) {
-                        alert('Empleado borrado');
-                        setTimeout(function () {
-                            window.location.href = '@Url.Action("Index", "Home")';
-                        }, 2000);
-                    }
-                    else {
-                        alert(response.msg);
-                    }
-                }
+                buttonsStyling: false,
             });
+
+            swalWithBootstrapButtons.fire({
+                title: '¿Estás seguro?',
+                text: "Se eliminará el registro",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí ',
+                cancelButtonText: 'No',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: $("#UrlDeleteEmployee").val(),
+                        type: "POST",
+                        data: {
+                            id: _id
+                        },
+                        success: function (response) {
+                            //console.log(response);
+                            if (response.success) {
+                                Swal.fire('¡Éxito!', 'Empleado borrado', 'success');
+                                setTimeout(function () {
+                                    window.location.href = '@Url.Action("Index", "Home")';
+                                }, 1500);
+                            }
+                            else {
+                                Swal.fire('¡Error!', response.msg, 'error');
+                            }
+                        }
+                    });
+
+                    // $.ajax({
+                    //     url: $("#UrlActivarDesactivar").val(),
+                    //     type: "POST",
+                    //     dataType: "json",
+                    //     contentType: "application/json; charset=utf-8",
+                    //     data: JSON.stringify({
+                    //         idDocumento: _id,
+                    //         activo: Activo == 1
+                    //     }),
+                    //     beforeSend: function () {
+                    //         mostrarLoading();
+                    //     },
+                    //     success: function (data) {
+                    //         if (data.success) {
+                    //             Swal.fire('¡Éxito!', 'Registro ' + accion + 'do', 'success');
+                    //             tblDatos.ajax.reload();
+                    //         }
+                    //         else
+                    //             Swal.fire('¡Error!', data.msgError, 'error')
+                    //     },
+                    //     complete: function () {
+                    //         ocultarLoading();
+                    //     },
+                    // });
+                } 
+            });
+
+
+
+
+            
         }
 
     </script>

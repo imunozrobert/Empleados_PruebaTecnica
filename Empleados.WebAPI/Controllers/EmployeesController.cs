@@ -33,6 +33,23 @@ namespace Empleados.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("GetQuery")]
+        public ApiResponseModel GetQuery(string? name, string? firstName)
+        {
+            var response = new ApiResponseModel();
+            try
+            {
+                response.data = employeeRepository.GetQuery(name,firstName);
+            }
+            catch (Exception ex)
+            {
+                response.result = 0;
+                response.msg = ex.Message;
+            }
+            return response;
+        }
+
+        [HttpGet]
         [Route("GetEmployee")]
         public ApiResponseModel GetEmployee(int id)
         {

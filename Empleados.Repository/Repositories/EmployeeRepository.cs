@@ -23,6 +23,11 @@ namespace Empleados.Repository.Repositories
             return employeeContext.GetAll().ToList();
         }
 
+        public List<EmployeeModel> GetQuery(string? name, string? firstName)
+        {
+            return employeeContext.GetQuery(name, firstName).ToList();
+        }
+
         public EmployeeModel Get(int id)
         {
             return employeeContext.Get(id);

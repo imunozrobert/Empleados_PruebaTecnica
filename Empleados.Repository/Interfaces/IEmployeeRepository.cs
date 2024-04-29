@@ -10,6 +10,7 @@ namespace Empleados.Repository.Interfaces
     public interface IEmployeeRepository
     {
         List<EmployeeModel> GetAll();
+        List<EmployeeModel> GetQuery(string? name, string? firstName);
         EmployeeModel Get(int id);
         EmployeeModel Insert(EmployeeModel employee);
         void Update(EmployeeModel employee);

@@ -5,19 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Empleados.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+       // private readonly ILogger<HomeController> _logger;
         
         IHostingEnvironment _hostingEnvironment;
 
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IHostingEnvironment he)
         {
-            //_logger = logger;
+            _hostingEnvironment = he;
         }
 
         public async Task<IActionResult> IndexAsync()
@@ -97,11 +98,10 @@ namespace Empleados.Web.Controllers
             var response = new Response();
             try
             {
-                string uploads = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
-                
-                if (_employee.ArchivoFotografia.Length > 0)
+                if (_employee.ArchivoFotografia != null)
                 {
-                    string filePath = Path.Combine(uploads, _employee.ArchivoFotografia.FileName);
+                    string filePath = Path.Combine(_hostingEnvironment.ContentRootPath,"ArchivosFotografia", _employee.ArchivoFotografia.FileName);
+                    
                     using (Stream fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await _employee.ArchivoFotografia.CopyToAsync(fileStream);
@@ -120,7 +120,7 @@ namespace Empleados.Web.Controllers
                     Telefono = _employee.Telefono,
                     CorreoElectronico = _employee.CorreoElectronico,
                     EstadoId = _employee.EstadoId,
-                    Fotografia = "Sin Foto",
+                    Fotografia = _employee.ArchivoFotografia != null ? _employee.ArchivoFotografia.FileName : "Sin foto"
                 };
 
                 var service = new ServiceHelper<ResponseApi>();

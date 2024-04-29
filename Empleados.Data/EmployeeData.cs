@@ -18,6 +18,14 @@ namespace Empleados.Data
             }
         }
 
+        public IEnumerable<EmployeeModel> GetQuery(string? name, string? firstName)
+        {
+            using (var dbManager = new DbManager())
+            {
+                return dbManager.ProcedimientoAlmacenado<EmployeeModel>(spCrud, new { P_Option = "GET",P_Nombre = name, P_Apellido = firstName });
+            }
+        }
+
         public EmployeeModel Get(int id)
         {
             using (var dbManager = new DbManager())
