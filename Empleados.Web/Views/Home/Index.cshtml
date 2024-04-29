@@ -1,0 +1,340 @@
+﻿@using Empleados.Models
+@{
+    ViewData["Title"] = "Empleados";
+
+    var lstEmpleados = ViewBag.LstEmpleados as List<EmployeeModel>;
+    var lstEstados = ViewBag.LstEstados as List<SelectListItem>;
+    var lstPuestos = ViewBag.LstPuestos as List<SelectListItem>;
+    
+}
+
+
+<h3>Empleados</h3>
+<hr />
+<div class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary" onclick="openModal(0)">+ Nuevo Empleado</button>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Fotografia</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Puesto</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Fecha Contratación</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>CorreoElectronico</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var empleado in lstEmpleados)
+                    {
+                        <tr>
+                            <td>@empleado.Id</td>
+                            <td>@empleado.Fotografia</td>
+                            <td>@empleado.Nombre</td>
+                            <td>@empleado.Apellido</td>
+                            <td>@empleado.Puesto</td>
+                            <td>@empleado.FechaNacimiento.ToString("dd-MM-yyyy")</td>
+                            <td>@empleado.FechaContratacion.ToString("dd-MM-yyyy")</td>
+                            <td>@empleado.Direccion</td>
+                            <td>@empleado.Telefono</td>
+                            <td>@empleado.CorreoElectronico</td>
+                            <td>@empleado.Estado</td>
+                            <td>
+                                <div class="d-flex flex-row gap-2">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="openModal(@empleado.Id)">Editar</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteEmployee(@empleado.Id)">Borrar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                   
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdlEmployee" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-warning fw-bold" id="exampleModalLabel"></h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmEmployee" autocomplete="off">
+                    @Html.Hidden("Id")
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div>
+                                <label class="form-label fw-bold">Nombre</label>
+                                @Html.TextBox("Nombre",null,new {@class="form-control", @maxlenght="50"})
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
+                                <label class="form-label fw-bold">Apellido</label>
+                                @Html.TextBox("Apellido", null, new { @class = "form-control", @maxlenght = "50" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <label class="form-label fw-bold">Puesto</label>
+                                @Html.DropDownList("PuestoId", lstPuestos, "-- Seleccione --", new { @class = "form-select" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div>
+                                <label class="form-label fw-bold">Fecha nacimiento</label>
+                                @Html.TextBox("FechaNacimiento", null, new { @class = "form-control", @type="date" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <label class="form-label fw-bold">Fecha contratación</label>
+                                @Html.TextBox("FechaContratacion", null, new { @class = "form-control", @type = "date" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div>
+                                <label class="form-label fw-bold">Dirección</label>
+                                @Html.TextBox("Direccion", null, new { @class = "form-control", @maxlenght = "50" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div>
+                                <label class="form-label fw-bold">Teléfono</label>
+                                @Html.TextBox("Telefono", null, new { @class = "form-control", @maxlenght = "50" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <label class="form-label fw-bold">Correo electrónico</label>
+                                @Html.TextBox("CorreoElectronico", null, new { @class = "form-control", @maxlenght = "100" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <label class="form-label fw-bold">Estado</label>
+                                @Html.DropDownList("EstadoId", lstEstados, "-- Seleccione --", new { @class = "form-select" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Fotografía</label>
+                            @Html.TextBox("ArchivoFotografia", null, new { @class = "form-control", @type="file" })
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="saveEmployee()">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Hidden("UrlSaveEmployee",Url.Action("Save","Home"))
+@Html.Hidden("UrlGetEmployee", Url.Action("GetEmployee", "Home"))
+@Html.Hidden("UrlDeleteEmployee", Url.Action("DeleteEmployee", "Home"))
+
+@section Scripts{
+    <script>
+        var reglasFormulario = {
+            Nombre: {
+                required: true
+            },
+            Apellido: {
+                required: true
+            },
+            PuestoId: {
+                required: true
+            },
+            FechaNacimiento: {
+                required: true
+            },
+            FechaContratacion: {
+                required: true
+            },
+            Direccion: {
+                required: true
+            },
+            Telefono: {
+                required: true
+            },
+            CorreoElectronico: {
+                required: true,
+                email: true
+            },
+            EstadoId: {
+                required: true
+            }
+        };
+
+        var formulario = $("#frmEmployee");
+
+        var mdlForm = new bootstrap.Modal(document.getElementById('mdlEmployee'), {
+            keyboard: false,
+            mouse: false
+        });
+
+        $(document).ready(function () {
+            formulario.validate({
+                submitHandler: function () {
+                    var formData = new FormData(formulario[0]);
+
+                    $.ajax({
+                        url: $("#UrlSaveEmployee").val(),
+                        type: "POST",
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            //mostrarLoading();
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                alert('Datos guardados');
+                                setTimeout(function () {
+                                    window.location.href = '@Url.Action("Index", "Home")';
+                                }, 2000);
+                            }
+                            else {
+                                alert(response.msg);
+                            }
+                        },
+                        complete: function () {
+
+                        },
+                    });
+                },
+                rules: reglasFormulario
+            });
+            tableListadoGet();
+        });
+
+        function openModal(_id) {
+            $("#Id").val(_id);
+            if (_id == 0) {
+                $("#Nombre").val('');
+                $("#Apellido").val('');
+                $("#PuestoId").val('');
+                $("#FechaNacimiento").val('');
+                $("#FechaContratacion").val('');
+                $("#Direccion").val('');
+                $("#Telefono").val('');
+                $("#CorreoElectronico").val('');
+                $("#EstadoId").val('');
+                mdlForm.show();
+            }
+            else {
+                $.ajax({
+                    url: $("#UrlGetEmployee").val(),
+                    type: "POST",
+                    data: {
+                        id: _id
+                    },
+                    beforeSend: function () {
+                        
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            $("#Nombre").val(response.data.nombre);
+                            $("#Apellido").val(response.data.apellido);
+                            $("#PuestoId").val(response.data.puestoId);
+                            $("#FechaNacimiento").val(moment(response.data.fechaNacimiento).format('YYYY-MM-DD'));
+                            $("#FechaContratacion").val(moment(response.data.fechaContratacion).format('YYYY-MM-DD'));
+                            $("#Direccion").val(response.data.direccion);
+                            $("#Telefono").val(response.data.telefono);
+                            $("#CorreoElectronico").val(response.data.correoElectronico);
+                            $("#EstadoId").val(response.data.estadoId);
+                            mdlForm.show();
+                        }
+                        else {
+                            alert(response.msg);
+                        }
+                        //$("#frmDatos").validate({ rules: reglasFormulario });
+                        
+                    },
+                    complete: function () {
+                        
+                    },
+                });
+            }
+            
+        }
+
+        function saveEmployee() {
+            formulario.submit();
+            // var formData = new FormData(formulario[0]);
+
+            // $.ajax({
+            //     url: $("#UrlSaveEmployee").val(),
+            //     type: "POST",
+            //     data: formData,
+            //     dataType: 'json',
+            //     contentType: false,
+            //     processData: false,
+            //     beforeSend: function () {
+            //         //mostrarLoading();
+            //     },
+            //     success: function (response) {
+            //         if (response.success) {
+            //             alert('Datos guardados');
+            //             setTimeout(function () {
+            //                 window.location.href = '@Url.Action("Index", "Home")';
+            //             }, 2000);
+            //         }
+            //         else {
+            //             alert(response.msg);
+            //         }
+            //     },
+            //     complete: function () {
+                    
+            //     },
+            // });
+        }
+
+        function deleteEmployee(_id) {
+            $.ajax({
+                url: $("#UrlDeleteEmployee").val(),
+                type: "POST",
+                data: {
+                    id: _id
+                },
+                success: function (response) {
+                    //console.log(response);
+                    if (response.success) {
+                        alert('Empleado borrado');
+                        setTimeout(function () {
+                            window.location.href = '@Url.Action("Index", "Home")';
+                        }, 2000);
+                    }
+                    else {
+                        alert(response.msg);
+                    }
+                }
+            });
+        }
+
+    </script>
+}
